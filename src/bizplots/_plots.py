@@ -237,6 +237,8 @@ def plot_quantiles(
             matplotilib container object with the lines representing the quantiles and
             the markers for the medians.
     """
+    positions = np.asarray(positions)
+    samples = np.asarray(samples)
     _kwargs = {
         "positions": positions,
         "samples": samples,
@@ -254,12 +256,48 @@ def plot_quantiles(
         raise NotImplementedError
 
 
-def plot_spaghetti(x, y, samples: int = 20, random_state: int | None = None, ax = None, **kwargs):
-    if np.ndim(samples) == 0: # integer was given:
+def plot_spaghetti(
+    x,
+    y,
+    samples=20,
+    random_state=None,
+    ax=None,
+    **kwargs,
+):
+    """Plot a few randomly selected (x, y) pairs.
+
+    Args:
+        x (array-like):
+            The x-values to be plotted, shape is (num_observations,)
+        y (array-like):
+            An array of samples, each sample is a possible realization of `y`.
+            The shape should be (num_samples, num_observations)
+        samples (int or array-like, optional):
+            If an int, it's interpreted as the number of samples to plot.
+            If an array, it is used to select the samples of `y` that will be plotted
+            and indexing is done along the axis=0 of `y`. Defaults to 20.
+        random_state (int | None, optional):
+            Seed for the numpy random generator. Defaults to None. Only relevant
+            if the `samples` argument is an integer.
+        ax (matplotlib.Axes, optional):
+            Where the lines will be plotted. If None, it will use the current ax.
+
+    Raises:
+        ValueError: When `samples` is not an int or a valid index for `y`.
+
+    Returns:
+        SpaghettiContainer:
+            A matplotlib container with the selected lines.
+            Supports a custom legend style.
+    """
+    x = np.asarray(x)
+    y = np.asarray(y)
+
+    if np.ndim(samples) == 0:  # integer was given:
         num_y_samples = len(y)
         rng = np.random.default_rng(random_state)
         indices = rng.choice(num_y_samples, size=samples, replace=False)
-    elif np.ndim(samples) == 1: # array of indices was provided
+    elif np.ndim(samples) == 1:  # array of indices was provided
         indices = samples
     else:
         raise ValueError

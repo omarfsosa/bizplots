@@ -36,7 +36,7 @@ class HandlerQuantile(HandlerBase):
         for artist in artists:
             artist.set_transform(trans)
         return artists
-    
+
 
 class HandlerSpaghetti(HandlerBase):
     def create_artists(

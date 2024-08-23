@@ -19,6 +19,7 @@ class QuantileContainer(Container):
         all_lines = thinlines + thicklines + markers
         super().__init__(all_lines, **kwargs)
 
+
 class SpaghettiContainer(Container):
     def __init__(
         self,
@@ -27,4 +28,3 @@ class SpaghettiContainer(Container):
     ):
         self.lines = lines
         super().__init__(lines, **kwargs)
-
