@@ -4,7 +4,7 @@ import matplotlib.colors as mcolors
 import matplotlib.lines as mlines
 import numpy as np
 
-from ._containers import QuantileContainer
+from ._containers import QuantileContainer, SpaghettiContainer
 
 
 def _pct_line(position, samples, percentile, orientation="vertical", **kwargs):
@@ -252,3 +252,37 @@ def plot_quantiles(
         return _plot_quantiles2d(**_kwargs)
     else:
         raise NotImplementedError
+
+
+def plot_spaghetti(x, y, samples: int = 20, random_state: int | None = None, ax = None, **kwargs):
+    if np.ndim(samples) == 0: # integer was given:
+        num_y_samples = len(y)
+        rng = np.random.default_rng(random_state)
+        indices = rng.choice(num_y_samples, size=samples, replace=False)
+    elif np.ndim(samples) == 1: # array of indices was provided
+        indices = samples
+    else:
+        raise ValueError
+
+    if ax is None:
+        ax = mpl.pyplot.gca()
+
+    kwargs = cbook.normalize_kwargs(kwargs, mlines.Line2D)
+    color = kwargs.pop("color", None)
+    if color is None:
+        color = ax._get_patches_for_fill.get_next_color()
+    color = mcolors.to_rgba_array(color)
+    kwargs["color"] = color
+    kwargs["alpha"] = kwargs.pop("alpha", 0.5)
+    container_label = kwargs.pop("label", None)
+
+    lines = []
+    for idx in indices:
+        line = mlines.Line2D(x, y[idx], label="_nolegend_", **kwargs)
+        lines.append(line)
+        ax.add_line(line)
+
+    ax._request_autoscale_view()
+    container = SpaghettiContainer(lines, label=container_label)
+    ax.add_container(container)
+    return container
