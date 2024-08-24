@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.legend_handler import HandlerBase
 from matplotlib.lines import Line2D
