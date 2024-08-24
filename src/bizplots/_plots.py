@@ -4,7 +4,7 @@ import matplotlib.colors as mcolors
 import matplotlib.lines as mlines
 import numpy as np
 
-from ._containers import QuantileContainer, SpaghettiContainer
+from ._containers import QuantileContainer, SpaghettiContainer, RibbonsContainer
 
 
 def _pct_line(position, samples, percentile, orientation="vertical", **kwargs):
@@ -324,3 +324,64 @@ def plot_spaghetti(
     container = SpaghettiContainer(lines, label=container_label)
     ax.add_container(container)
     return container
+
+
+def plot_ribbons(
+    x,
+    y,
+    num_ribbons=10,
+    percentile_min=2.5,
+    percentile_max=97.5,
+    ax=None,
+    **kwargs,
+):
+    """
+    Make a ribbon plot that shows the different quantiles of the
+    distribution of y against x.
+
+    Args:
+        x: 1d array
+            The values for the x axis
+        y: 2d array
+        num_ribbons: int (default 10)
+            How many quantiles to show
+        percentile_min: float, between 0 and 50
+            The lowest percentile to be shown
+        percentile_max: float between 50 and 100
+            The highest percentile to show.
+        ax: matplotlib.Axes
+            Where to plot the figure.
+        kwargs: dict
+            Extra arguments passed to `plt.fill_between`.
+            Controls the aspect of the ribbons.
+
+    Returns:
+        matplotlib.Axes
+    """
+    if ax is None:
+        ax = mpl.pyplot.gca()
+
+    lower = np.linspace(percentile_min, 50, num=num_ribbons, endpoint=False)
+    upper = np.linspace(50, percentile_max, num=num_ribbons + 1)[1:]
+    perc1 = np.percentile(y, lower, axis=0)
+    perc2 = np.percentile(y, upper, axis=0)
+
+    # fix some kwargs:
+    alpha = kwargs.pop("alpha", 1)
+    alpha = alpha / num_ribbons
+    kwargs["alpha"] = alpha
+    color = kwargs.pop("color", None)
+    if color is None:
+        color = ax._get_patches_for_fill.get_next_color()
+    color = mcolors.to_rgba_array(color)
+    kwargs["color"] = color
+    container_label = kwargs.pop("label", None)
+
+    polygon_collections = []
+    for p1, p2 in zip(perc1, perc2):
+        collection = ax.fill_between(x, p1, p2, label="_nolegend_", **kwargs)
+        polygon_collections.append(collection)
+
+    container = RibbonsContainer(polygon_collections, label=container_label)
+    ax.add_container(container)
+    return ax

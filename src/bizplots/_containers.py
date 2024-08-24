@@ -28,3 +28,13 @@ class SpaghettiContainer(Container):
     ):
         self.lines = lines
         super().__init__(lines, **kwargs)
+
+
+class RibbonsContainer(Container):
+    def __init__(
+        self,
+        collections,
+        **kwargs,
+    ):
+        self.collections = collections
+        super().__init__(collections, **kwargs)

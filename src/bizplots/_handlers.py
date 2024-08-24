@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.legend_handler import HandlerBase
 from matplotlib.lines import Line2D
@@ -56,3 +57,26 @@ class HandlerSpaghetti(HandlerBase):
             artist.update_from(orig_handle.lines[0])
             artist.set_transform(trans)
         return artists
+
+
+class HandlerRibbons(HandlerBase):
+    def create_artists(
+        self, legend, orig_handle, xdescent, ydescent, width, height, fontsize, trans
+    ):
+        collections = orig_handle.collections
+        num_collections = len(collections)
+        rectangles = []
+        ys = np.linspace(
+            -ydescent, -ydescent + height / 2, num=num_collections, endpoint=False
+        )
+        hs = hs = height - 2 * ys
+        for col, y, h in zip(collections, ys, hs):
+            xy = (xdescent, y)
+            r = Rectangle(xy, width, h)
+            r.set_facecolor(col.get_facecolor())
+            r.set_alpha(col.get_alpha())
+            rectangles.append(r)
+
+        for artist in rectangles:
+            artist.set_transform(trans)
+        return rectangles
