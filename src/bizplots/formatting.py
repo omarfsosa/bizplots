@@ -75,9 +75,9 @@ class CurrencyFormatter(Formatter):
         self.human_readable = human_readable
 
     def __call__(self, x, pos=None):
-        return self.as_currency(x)
+        return self._as_currency(x)
 
-    def as_currency(self, x):
+    def _as_currency(self, x):
         result = as_currency(
             x,
             decimals=self.decimals,
