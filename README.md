@@ -35,7 +35,7 @@ axes[1].legend(handler_map=handler_map)
 plt.show()
 ```
 
-![image](plot_quantiles.png)
+![image](examples/plot_quantiles.png)
 
 ## Plot spaghetti and ribbons
 
@@ -55,7 +55,7 @@ for ax in fig.axes:
 plt.show()
 ```
 
-![image](spaghetti_and_ribbons.png)
+![image](examples/spaghetti_and_ribbons.png)
 
 
 ## Currency formatter
@@ -77,4 +77,4 @@ for ax, formatter in zip(fig.axes, formatters):
 plt.show()
 ```
 
-![image](currency_formatter.png)
+![image](examples/currency_formatter.png)
